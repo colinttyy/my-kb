@@ -1,0 +1,44 @@
+---
+import { formatDate, tagSlug } from '../lib/utils';
+
+interface Entry {
+  id: string;
+  title: string;
+  description: string;
+  date: Date;
+  tags: string[];
+  href: string;
+}
+
+interface Props {
+  entries: Entry[];
+}
+
+const { entries } = Astro.props;
+---
+{
+  entries.length === 0 ? (
+    <p class="empty">这里还没有内容。在 src/content/ 对应目录下新建一个 .md 文件就会出现。</p>
+  ) : (
+    <ul class="entry-list">
+      {entries.map((e) => (
+        <li>
+          <a class="entry" href={e.href}>
+            <div class="entry-top">
+              <span class="entry-title">{e.title}</span>
+              <span class="entry-date">{formatDate(e.date)}</span>
+            </div>
+            {e.description && <p class="entry-desc">{e.description}</p>}
+            {e.tags.length > 0 && (
+              <div class="entry-tags">
+                {e.tags.map((t) => (
+                  <span class="tag">#{t}</span>
+                ))}
+              </div>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}

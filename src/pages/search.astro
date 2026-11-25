@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="搜索" description="搜索全站内容">
+  <section class="hero">
+    <div class="wrap">
+      <p class="hero-kicker">Search</p>
+      <h1>搜索</h1>
+      <p>输入关键词，标题、描述、标签和正文都会被搜索。</p>
+    </div>
+  </section>
+
+  <div class="wrap section">
+    <input
+      class="search-box"
+      id="q"
+      type="search"
+      placeholder="例如：液冷 / CDU / 除湿 / 读书"
+      autocomplete="off"
+      autofocus
+    />
+    <p class="search-empty" id="hint">加载索引中…</p>
+    <ul class="entry-list" id="results"></ul>
+  </div>
+
+  <script>
+    interface Item {
+      title: string;
+      description: string;
+      tags: string[];
+      date: string;
+      category: string;
+      url: string;
+      text: string;
+    }
+
+    const q = document.getElementById('q') as HTMLInputElement | null;
+    const hint = document.getElementById('hint')!;
+    const results = document.getElementById('results')!;
+    let items: Item[] = [];
+
+    const escapeHtml = (s: string) =>
+      s.replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
+      );
+
+    /** 从长文本里截取包含关键词的一小段 */
+    function snippet(text: string, term: string): string {
+      const i = text.toLowerCase().indexOf(term);
+      if (i < 0) return '';
+      const start = Math.max(0, i - 30);
+      return (start > 0 ? '…' : '') + text.slice(start, i + term.length + 60) + '…';
+    }
+
+    function render(list: Item[], term: string) {
+      results.innerHTML = '';
+      if (!term.trim()) {
+        hint.textContent = `共 ${items.length} 篇内容。输入关键词开始搜索。`;
+        return;
+      }
+      if (list.length === 0) {
+        hint.textContent = '没有找到匹配的内容，换个关键词试试。';
+        return;
+      }
+      hint.textContent = `找到 ${list.length} 篇`;
+      for (const it of list) {
+        const li = document.createElement('li');
+        const snip = snippet(it.text, term.toLowerCase());
+        li.innerHTML = `
+          <a class="entry" href="${it.url}">
+            <div class="entry-top">
+              <span class="entry-title">${escapeHtml(it.title)}</span>
+              <span class="entry-date">${it.category} · ${it.date}</span>
+            </div>
+            ${it.description ? `<p class="entry-desc">${escapeHtml(it.description)}</p>` : ''}
+            ${snip ? `<p class="entry-desc">${escapeHtml(snip)}</p>` : ''}
+            ${it.tags.length ? `<div class="entry-tags">${it.tags.map((t) => `<span class="tag">#${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+          </a>`;
+        results.appendChild(li);
+      }
+    }
+
+    function search(term: string): Item[] {
+      const t = term.trim().toLowerCase();
+      if (!t) return [];
+      const words = t.split(/\s+/).filter(Boolean);
+      return items
+        .map((it) => {
+          const haystack = `${it.title} ${it.description} ${it.tags.join(' ')} ${it.text}`.toLowerCase();
+          let score = 0;
+          for (const w of words) {
+            if (!haystack.includes(w)) return { it, score: -1 };
+            if (it.title.toLowerCase().includes(w)) score += 10;
+            if (it.tags.join(' ').toLowerCase().includes(w)) score += 5;
+            score += 1;
+          }
+          return { it, score };
+        })
+        .filter((x) => x.score >= 0)
+        .sort((a, b) => b.score - a.score)
+        .map((x) => x.it);
+    }
+
+    fetch('/search-index.json')
+      .then((r) => r.json())
+      .then((data: { items: Item[] }) => {
+        items = data.items;
+        const urlTerm = new URLSearchParams(location.search).get('q') ?? '';
+        if (urlTerm && q) q.value = urlTerm;
+        render(search(q?.value ?? ''), q?.value ?? '');
+      });
+
+    q?.addEventListener('input', () => {
+      const term = q.value;
+      render(search(term), term);
+      const url = new URL(location.href);
+      term ? url.searchParams.set('q', term) : url.searchParams.delete('q');
+      history.replaceState(null, '', url);
+    });
+  </script>
+</BaseLayout>

@@ -1,0 +1,20 @@
+{
+  "name": "kb-site",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@12.23.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && node scripts/sitemap.mjs",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "astro": "^5.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "sharp"]
+  }
+}

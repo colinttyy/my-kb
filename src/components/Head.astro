@@ -1,0 +1,24 @@
+---
+import { site } from '../site.config';
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.description}`;
+---
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{pageTitle}</title>
+<meta name="description" content={description ?? site.description} />
+<meta name="author" content={site.author} />
+<link rel="canonical" href={canonical} />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={description ?? site.description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:site_name" content={site.name} />
+<meta name="twitter:card" content="summary" />
+
+<link rel="alternate" type="application/rss+xml" title={site.name} href="/rss.xml" />
+<link rel="sitemap" href="/sitemap-index.xml" />

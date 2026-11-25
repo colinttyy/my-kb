@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../site.config';
+---
+<BaseLayout title="关于" description={`关于 ${site.name}`}>
+  <article class="post wrap">
+    <h1>关于</h1>
+    <div class="post-meta">
+      <span>最后更新：{new Date().toISOString().slice(0, 10)}</span>
+    </div>
+
+    <div class="prose">
+      <p>你好，我是 <strong>{site.author}</strong>。</p>
+
+      <p>
+        这里是我的个人知识库：把工作中想明白的事、踩过的坑、读过的书，整理成可以被检索的形式。
+        与其说是"博客"，不如说是一个公开的笔记本 —— 写给人看，也写给三年后的自己看。
+      </p>
+
+      <h2>这个知识库有什么</h2>
+      <ul>
+        <li><strong>专业笔记</strong>：暖通空调、数据中心温控、液冷、工程计算相关的问题与结论。</li>
+        <li><strong>项目作品</strong>：做过的项目背景、我负责的部分、结果与复盘。</li>
+        <li><strong>读书笔记</strong>：书里的观点，加上我自己的判断。</li>
+        <li><strong>资源收藏</strong>：反复用到的工具、模板和链接。</li>
+      </ul>
+
+      <h2>关于内容</h2>
+      <p>
+        所有内容都是个人理解，可能存在错误。如果你发现哪里不对，欢迎指出 —— 这正是把笔记公开的意义。
+      </p>
+
+      <h2>联系我</h2>
+      <ul>
+        {site.links.map((l) => (
+          <li>
+            <a href={l.url}>{l.label}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </article>
+</BaseLayout>

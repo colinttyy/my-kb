@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EntryList from './EntryList.astro';
+
+interface Props {
+  catKey: 'notes' | 'books' | 'projects' | 'resources';
+  title: string;
+  blurb: string;
+  basePath: string;
+}
+
+const { catKey, title, blurb, basePath } = Astro.props;
+
+const entries = (await getCollection(catKey))
+  .filter((e) => !e.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .map((e) => ({
+    id: e.id,
+    title: e.data.title,
+    description: e.data.description,
+    date: e.data.date,
+    tags: e.data.tags,
+    href: `${basePath}/${e.id}/`,
+  }));
+
+const allTags = [...new Set(entries.flatMap((e) => e.tags))].sort();
+---
+<BaseLayout title={title} description={blurb}>
+  <section class="hero">
+    <div class="wrap">
+      <p class="hero-kicker">Section</p>
+      <h1>{title}</h1>
+      <p>{blurb}</p>
+      <p style="margin-top: 12px; font-size: 13px; color: var(--text-3);">共 {entries.length} 篇</p>
+    </div>
+  </section>
+
+  <div class="wrap section">
+    {
+      allTags.length > 0 && (
+        <div class="entry-tags" style="margin-bottom: 22px;">
+          {allTags.map((t) => (
+            <a class="tag" href={`/tags/${t}`}>
+              #{t}
+            </a>
+          ))}
+        </div>
+      )
+    }
+    <EntryList entries={entries} />
+  </div>
+</BaseLayout>

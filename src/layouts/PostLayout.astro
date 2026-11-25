@@ -1,0 +1,58 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { formatDate } from '../lib/utils';
+
+interface Props {
+  title: string;
+  description?: string;
+  date: Date;
+  updated?: Date;
+  tags: string[];
+  backPath: string;
+  backLabel: string;
+  wordCount?: number;
+}
+
+const { title, description, date, updated, tags, backPath, backLabel, wordCount } = Astro.props;
+---
+<BaseLayout title={title} description={description}>
+  <article class="post wrap">
+    <div class="breadcrumb">
+      <a href="/">首页</a> / <a href={backPath}>{backLabel}</a>
+    </div>
+
+    <h1>{title}</h1>
+
+    <div class="post-meta">
+      <span>发布于 {formatDate(date)}</span>
+      {updated && <span>更新于 {formatDate(updated)}</span>}
+      {wordCount && (
+        <>
+          <span class="sep">|</span>
+          <span>约 {wordCount} 字</span>
+        </>
+      )}
+    </div>
+
+    <div class="prose">
+      <slot />
+    </div>
+
+    {
+      tags.length > 0 && (
+        <div class="entry-tags" style="margin-top: 30px;">
+          {tags.map((t) => (
+            <a class="tag" href={`/tags/${t}`}>
+              #{t}
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    <div class="post-footer">
+      <a href={backPath}>← 返回{backLabel}</a>
+      <a href="/search">搜索全站</a>
+    </div>
+  </article>
+</BaseLayout>

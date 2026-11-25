@@ -1,0 +1,38 @@
+---
+import Head from '../components/Head.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SHOW_DEMO_BANNER } from '../site.config';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  wide?: boolean;
+}
+
+const { title, description } = Astro.props;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <Head title={title} description={description} />
+  </head>
+  <body>
+    <Header />
+    {
+      SHOW_DEMO_BANNER && (
+        <div class="demo-banner">
+          <div class="wrap">
+            <strong>示例内容</strong>
+            <span>当前文章是模板自带的示例，换成你自己的内容后，把 src/site.config.ts 里的 SHOW_DEMO_BANNER 改为 false 即可隐藏本提示。</span>
+          </div>
+        </div>
+      )
+    }
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

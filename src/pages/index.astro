@@ -1,0 +1,71 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EntryList from '../components/EntryList.astro';
+import { site, RECENT_COUNT } from '../site.config';
+import { CATEGORY_META, type CategoryKey } from '../lib/utils';
+
+const all = await Promise.all(
+  site.categories.map(async (c) => {
+    const entries = (await getCollection(c.key)).filter((e) => !e.data.draft);
+    return { ...c, count: entries.length };
+  }),
+);
+
+const recent = (
+  await Promise.all(
+    site.categories.map(async (c) =>
+      (await getCollection(c.key))
+        .filter((e) => !e.data.draft)
+        .map((e) => ({
+          id: e.id,
+          title: e.data.title,
+          description: e.data.description,
+          date: e.data.date,
+          tags: e.data.tags,
+          href: `${CATEGORY_META[c.key as CategoryKey].path}/${e.id}/`,
+        })),
+    ),
+  )
+)
+  .flat()
+  .sort((a, b) => b.date.getTime() - a.date.getTime())
+  .slice(0, RECENT_COUNT);
+---
+<BaseLayout description={site.description}>
+  <section class="hero">
+    <div class="wrap">
+      <p class="hero-kicker">Knowledge Base</p>
+      <h1>{site.name}</h1>
+      <p>{site.description}</p>
+      <div class="hero-links">
+        <a class="btn btn-primary" href="/notes">浏览专业笔记</a>
+        <a class="btn" href="/search">搜索全站</a>
+        {site.links.map((l) => <a class="btn" href={l.url}>{l.label}</a>)}
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="cats">
+      {
+        all.map((c) => (
+          <a class="cat" href={c.path}>
+            <span class="cat-icon">{c.icon}</span>
+            <div class="cat-title">{c.label}</div>
+            <p class="cat-blurb">{c.blurb}</p>
+            <span class="cat-count">{c.count} 篇</span>
+          </a>
+        ))
+      }
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>最近更新</h2>
+        <a href="/notes">全部 →</a>
+      </div>
+      <EntryList entries={recent} />
+    </section>
+  </div>
+</BaseLayout>
