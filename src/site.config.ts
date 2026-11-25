@@ -22,7 +22,6 @@ export const site = {
   /** 首页顶部展示的社交/联系链接，不需要的直接删掉整行 */
   links: [
     { label: 'GitHub', url: 'https://github.com/yourname' },
-    { label: '邮箱', url: 'mailto:you@example.com' },
   ],
 
   /** 栏目配置：顺序、路径、显示名称、首页简介 */
@@ -62,4 +61,4 @@ export const site = {
 export const RECENT_COUNT = 6;
 
 /** 是否在每页顶部显示"示例内容"提示条（内容换成你自己的之后设为 false） */
-export const SHOW_DEMO_BANNER = true;
+export const SHOW_DEMO_BANNER = false;
