@@ -5,26 +5,23 @@
 
 export const site = {
   /** 站点名，显示在左上角和首页大标题 */
-  name: 'colin的知识库',
+  name: 'colin 的知识库',
 
   /** 一句话介绍，显示在首页 */
   description: '暖通空调 / 数据中心温控 / 工程方案设计 —— 把工作中的判断沉淀下来。',
 
   /** 你的名字 */
   author: 'colin',
-links: [
-  { label: 'GitHub', url: 'https://github.com/colinttyy' },   ← 换成你的主页
-],
 
-  /** 域名。先用 Vercel 给的免费二级域名，以后买了域名再改这里 */
-url: 'https://my-kb-xxxx.vercel.app',   // 换成真实网址
+  /** 域名：部署拿到网址后改成真实网址 */
+  url: 'https://example.edgeone.app',
 
   /** 语言 */
   lang: 'zh-CN',
 
-  /** 首页顶部展示的社交/联系链接，不需要的直接删掉整行 */
+  /** 首页顶部的社交/联系链接；不需要的整行删掉 */
   links: [
-    { label: 'GitHub', url: 'https://github.com/yourname' },
+    { label: 'GitHub', url: 'https://github.com/colinttyy' },
   ],
 
   /** 栏目配置：顺序、路径、显示名称、首页简介 */
