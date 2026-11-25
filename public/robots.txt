@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://example.vercel.app/sitemap-index.xml
+Sitemap: https://colinttyy.github.io/sitemap-index.xml

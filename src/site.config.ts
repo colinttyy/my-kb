@@ -14,7 +14,7 @@ export const site = {
   author: 'colin',
 
   /** 域名：部署拿到网址后改成真实网址 */
-  url: 'https://example.edgeone.app',
+  url: 'https://colinttyy.github.io',
 
   /** 语言 */
   lang: 'zh-CN',

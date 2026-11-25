@@ -6,7 +6,7 @@ cd /d "%~dp0"
 
 echo.
 echo  ==========================================
-echo   Publish to GitHub (Vercel auto-deploys)
+echo   Publish  (GitHub push)
 echo  ==========================================
 echo.
 
@@ -18,31 +18,40 @@ if "%MSG%"=="" set /p "MSG=Update message (press Enter for default): "
 if "%MSG%"=="" set "MSG=update content"
 
 echo.
-echo  [1/3] staging changes...
+echo  [1/4] staging changes...
 git add .
 if errorlevel 1 goto fail
 
-echo  [2/3] committing...
+echo  [2/4] committing...
 git commit -m "%MSG%"
 
-echo  [3/3] pushing to GitHub...
-git push
+echo  [3/4] pushing to origin (my-kb)...
+git push origin main
 if errorlevel 1 goto fail
+
+git remote | findstr /x /c:"pages" >nul
+if not errorlevel 1 (
+  echo  [4/4] pushing to pages (colinttyy.github.io)...
+  git push pages main
+  if errorlevel 1 goto fail
+) else (
+  echo  [4/4] no "pages" remote configured, skipped.
+  echo.
+  echo  To publish your live site, add it once:
+  echo    git remote add pages https://github.com/colinttyy/colinttyy.github.io.git
+)
 
 echo.
 echo  ==========================================
-echo   Pushed. Vercel rebuilds in about 1 minute.
-echo   Open your site and press Ctrl+F5 to refresh.
+echo   Done. GitHub Pages rebuilds in 1-2 minutes.
+echo   Open https://colinttyy.github.io and press Ctrl+F5
 echo  ==========================================
 echo.
 pause
 exit /b 0
 
 :nogit
-echo  [ERROR] This folder is not a Git repository yet.
-echo.
-echo  Do step 4 of the setup manual first (git init + git remote add),
-echo  then use this script for every update.
+echo  [ERROR] This folder is not a Git repository.
 echo.
 pause
 exit /b 1
